@@ -2,8 +2,8 @@ import fs from "fs"
 import csv from "csv-parser"
 import { parse } from 'csv-parse/sync';
 import dotenv from 'dotenv'
-import { deleteManyEquipments, insertManyEquipments } from "../services/equipmentService.js";
-import { connectDB, disconnectDB } from "../config/db.js";
+import { deleteManyEquipments, insertManyEquipments } from "../services/equipment.service.js";
+import { connectDB, disconnectDB } from "../config/db.config.js";
 
 dotenv.config()
 

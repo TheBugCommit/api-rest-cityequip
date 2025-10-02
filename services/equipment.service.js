@@ -1,4 +1,4 @@
-import Equipment from "../models/Equipment.js"
+import Equipment from "../models/equipment.model.js"
 
 export const insertManyEquipments = async (data) => {
     if (!Array.isArray(data) || data.length === 0)

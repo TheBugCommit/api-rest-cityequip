@@ -1,6 +1,6 @@
 import express from 'express'
 import routerV1 from './routes/v1/router.js'
-import { corsMiddleware } from './middlewares/cors.js'
+import { corsMiddleware } from './middlewares/cors.middleware.js'
 import dotenv from 'dotenv'
 
 dotenv.config()
