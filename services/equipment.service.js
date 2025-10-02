@@ -4,8 +4,7 @@ export const insertManyEquipments = async (data) => {
     if (!Array.isArray(data) || data.length === 0)
         throw new Error("No data to insert")
 
-    const inserted = await Equipment.insertMany(data, { ordered: false })
-    return inserted
+    return await Equipment.insertMany(data, { ordered: false })
 }
 
 export const deleteManyEquipments = async (filter) => {
@@ -13,4 +12,18 @@ export const deleteManyEquipments = async (filter) => {
         throw new Error("No filter passed")
 
     await Equipment.deleteMany(filter)
+}
+
+export const getEquipmentById = async (id) => {
+    if(id == null)
+        throw new Error("No Id passed")
+
+    return await Equipment.findById(id)
+}
+
+export const deleteEquipmentById = async (id) => {
+    if(id == null)
+        throw new Error("No Id passed")
+
+    return await Equipment.findByIdAndDelete(id)
 }

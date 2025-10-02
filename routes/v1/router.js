@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { checkApiKey } from '../../middlewares/auth.middleware.js'
+import authMiddleware from '../../middlewares/auth.middleware.js'
+import { deleteEquipment } from "../../controllers/v1/equipment.controller.js";
 
 const router = Router()
 
 router.get('/equipaments', (req, res) => {res.send({message: 'ok'})})
 router.get('/equipaments/:id', (req, res) => {res.send({message: 'ok'})})
-router.post('/equipaments', checkApiKey, (req, res) => {res.send({message: 'ok'})})
-router.put('/equipaments/:id', checkApiKey, (req, res) => {res.send({message: 'ok'})})
-router.delete('/equipaments/:id', checkApiKey, (req, res) => {res.send({message: 'ok'})})
+router.post('/equipaments', authMiddleware, (req, res) => {res.send({message: 'ok'})})
+router.put('/equipaments/:id', authMiddleware, (req, res) => {res.send({message: 'ok'})})
+router.delete('/equipaments/:id', authMiddleware, deleteEquipment)
 
 /**
  * GET /equipments → listado completo de equipamientos.
