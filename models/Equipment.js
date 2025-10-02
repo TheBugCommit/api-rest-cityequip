@@ -1,0 +1,60 @@
+import mongoose from 'mongoose';
+
+const equipmentSchema = new mongoose.Schema({
+  nom: { 
+    type: String,
+    trim: true,
+    required: true 
+  },
+  horari: { 
+    type: String,
+    trim: true
+  },
+  tipus: { 
+    type: String, 
+    trim: true,
+    required: true  
+  },
+  municipal: { 
+    type: Boolean,
+    trim: true,
+    required: true
+  },
+  latitud: { 
+    type: Number,
+    trim: true, 
+  },
+  longitud: { 
+    type: Number, 
+    trim: true 
+  },
+  localitzacio: { 
+    type: String,
+    trim: true, 
+  },
+  telefon: { 
+    type: String, 
+    trim: true 
+  },
+  districte: { 
+    type: String, 
+    trim: true,
+  },
+  codi_ens: { 
+    type: String, 
+    trim: true,
+    required: true 
+  },
+  nom_ens: { 
+    type: String, 
+    trim: true,
+    required: true 
+  }
+}, {
+  strict: true,
+  collection: 'Equipments',
+  timestamps: true
+});
+
+const Equipment = mongoose.model('Equipment', equipmentSchema);
+export default Equipment;
