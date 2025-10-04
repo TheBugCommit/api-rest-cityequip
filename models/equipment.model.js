@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from 'mongoose'
 
 const equipmentSchema = new mongoose.Schema({
   uuid: { 
@@ -17,13 +17,11 @@ const equipmentSchema = new mongoose.Schema({
   },
   tipus: { 
     type: String, 
-    trim: true,
-    required: true  
+    trim: true
   },
   municipal: { 
     type: Boolean,
-    trim: true,
-    required: true
+    trim: true
   },
   latitud: { 
     type: Number,
@@ -47,8 +45,7 @@ const equipmentSchema = new mongoose.Schema({
   },
   codi_ens: { 
     type: String, 
-    trim: true,
-    required: true 
+    trim: true
   },
   nom_ens: { 
     type: String, 
@@ -59,7 +56,7 @@ const equipmentSchema = new mongoose.Schema({
   strict: true,
   collection: 'Equipments',
   timestamps: true
-});
+})
 
-const Equipment = mongoose.model('Equipment', equipmentSchema);
-export default Equipment;
+const Equipment = mongoose.model('Equipment', equipmentSchema)
+export default Equipment

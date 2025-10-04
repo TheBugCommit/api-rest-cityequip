@@ -5,31 +5,9 @@ import { v4 as uuidv4 } from "uuid"
 import { parse } from 'csv-parse/sync'
 import { connectDB, disconnectDB } from "../config/db.config.js";
 import equipmentService from "../services/equipment.service.js";
+import { cleanString, toBoolean, parseFloatSafe } from "../utils/parse.utils.js"
 
 dotenv.config()
-
-function cleanString(str) {
-  if (!str) return null
-  return str
-    .trim()
-    .replace(/\s+/g, " ")
-    .replace(/[^\p{L}\p{N}\s\.,:@()\/'-]/gu, "")
-    .normalize("NFC")
-}
-
-function toBoolean(str) {
-  if (!str) return null
-  const val = cleanString(str).toLowerCase()
-  if (["sí", "si", "true", "1"].includes(val)) return true
-  if (["no", "false", "0"].includes(val)) return false
-  return null
-}
-
-function parseFloatSafe(str) {
-  if (!str) return null
-  const num = parseFloat(str.toString().replace(",", "."))
-  return isNaN(num) ? null : num
-}
 
 const fixedLines = []
 const raw = fs.readFileSync("data/OpenDataTGN_equipamientos.csv", "utf8")

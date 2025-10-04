@@ -1,16 +1,31 @@
 import { Router } from "express";
-import authMiddleware from '../../middlewares/auth.middleware.js'
-import { createEquipment, deleteEquipment, updateEquipment } from "../../controllers/v1/equipment.controller.js";
+import middlewares from '../../middlewares/index.js'
+import equipmentController from "../../controllers/v1/equipment.controller.js";
 import { equipmentIdValidator, equipmentValidator } from "../../validators/equipment.validator.js";
-import validate from "../../middlewares/validate.middleware.js";
 
 const router = Router()
 
 router.get('/equipaments', (req, res) => {res.send({message: 'ok'})})
 router.get('/equipaments/:id', (req, res) => {res.send({message: 'ok'})})
-router.post('/equipaments', authMiddleware, equipmentValidator, validate, createEquipment)
-router.put('/equipaments/:id', authMiddleware, equipmentIdValidator, equipmentValidator, validate, updateEquipment)
-router.delete('/equipaments/:id', authMiddleware, equipmentIdValidator, validate, deleteEquipment)
+router.post('/equipaments', 
+    middlewares.authMiddleware, 
+    equipmentValidator, 
+    middlewares.validateRequest, 
+    equipmentController.createEquipment
+)
+router.put('/equipaments/:id', 
+    middlewares.authMiddleware, 
+    equipmentIdValidator, 
+    equipmentValidator, 
+    middlewares.validateRequest, 
+    equipmentController.updateEquipment
+)
+router.delete('/equipaments/:id', 
+    middlewares.authMiddleware, 
+    equipmentIdValidator, 
+    middlewares.validateRequest, 
+    equipmentController.deleteEquipment
+)
 
 /**
 - GET /equipments → listado completo de equipamientos.

@@ -1,42 +1,93 @@
 import Equipment from "../models/equipment.model.js"
+import createError from "../utils/error.utils.js"
+import handleMongooseError from "../utils/handleMongooseError.utils.js"
 
-const insertManyEquipments = async (data) => {
-    if (!Array.isArray(data) || data.length === 0)
-        throw new Error("No data to insert")
+const insertManyEquipments = async (data) => {    
+    try {
+        if (!Array.isArray(data) || data.length === 0)
+            throw createError("No data to insert", 400)
 
-    return await Equipment.insertMany(data, { ordered: false })
+        return await Equipment.insertMany(data)
+    } catch (err) {
+        throw handleMongooseError(err, 'Error inserting many equipments')
+    }
 }
 
-const deleteManyEquipments = async (filter) => {
-    if(!(typeof filter === 'object' && filter !== null && !Array.isArray(filter)))
-        throw new Error("No filter passed")
+const deleteManyEquipments = async (filter) => {    
+    try {
+        if (!(typeof filter === 'object' && filter !== null && !Array.isArray(filter)))
+            throw createError("No filter passed", 400)
 
-    await Equipment.deleteMany(filter)
+        await Equipment.deleteMany(filter)
+    } catch (err) {
+        throw handleMongooseError(err, 'Error deleting many equipments')
+    }
 }
 
 const getEquipmentById = async (id) => {
-    if(id == null)
-        throw new Error("No Id passed")
+    try {
+        if (id == null) throw createError("No ID passed", 400)
 
-    return await Equipment.findById(id)
+        return await Equipment.findOne({ uuid: id })
+    } catch (err) {
+        throw handleMongooseError(err, 'Error finding an equipment')
+    }
 }
 
 const deleteEquipmentById = async (id) => {
-    if(id == null)
-        throw new Error("No Id passed")
+    try {
+        if (id == null) throw createError("No ID passed", 400)
 
-    return await Equipment.findByIdAndDelete(id)
+        const deleted = await Equipment.findOneAndDelete({ uuid: id })
+        if (!deleted) throw createError(`Equipment { ${id} } not found`, 404)
+    } catch (err) {
+        throw handleMongooseError(err, 'Error deleting equipment')
+    }
+
+    return deleted
 }
 
-const updateEquipment = async (id) => {
+const createEquipment = async (data) => {
+    try {
+        if (!(typeof data === 'object' && data !== null && !Array.isArray(data)))
+            throw createError("No data passed", 400)
 
+        const equipment = new Equipment(data)
+        return await equipment.save()
+    } catch (err) {
+        throw handleMongooseError(err, 'Error creating equipment')
+    }
+}
+
+const updateEquipment = async (id, data) => {
+    let updated = null
+    try {
+        if (id == null)
+            throw createError("No ID passed", 400)
+
+        if (!(typeof data === 'object' && data !== null && !Array.isArray(data)))
+            throw createError("No data passed", 400)
+
+        updated = await Equipment.findOneAndUpdate(
+            { uuid: id },
+            { $set: data },
+            { new: true, runValidators: true }
+        )
+
+        if (!updated) throw createError(`Equipment { ${id} } not found`, 404)
+    } catch (err) {
+        throw handleMongooseError(err, 'Error updating equipment')
+    }
+
+    return updated
 }
 
 const equipmentService = {
-    insertManyEquipments, 
+    insertManyEquipments,
     deleteEquipmentById,
     getEquipmentById,
     deleteManyEquipments,
+    createEquipment,
     updateEquipment
 }
 
