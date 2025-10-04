@@ -1,9 +1,10 @@
 import fs from "fs"
-import csv from "csv-parser"
-import { parse } from 'csv-parse/sync';
 import dotenv from 'dotenv'
-import { deleteManyEquipments, insertManyEquipments } from "../services/equipment.service.js";
+import csv from "csv-parser"
+import { v4 as uuidv4 } from "uuid"
+import { parse } from 'csv-parse/sync'
 import { connectDB, disconnectDB } from "../config/db.config.js";
+import equipmentService from "../services/equipment.service.js";
 
 dotenv.config()
 
@@ -60,6 +61,7 @@ fs.createReadStream("data/equipments_fixed.csv")
   }))
   .on("data", (row) => {
     const data = {
+      uuid: uuidv4(),
       nom: cleanString(row.nom),
       horari: cleanString(row.horari),
       tipus: cleanString(row.tipus),
@@ -81,22 +83,22 @@ fs.createReadStream("data/equipments_fixed.csv")
       return
     }
 
-    connectDB().catch(error => {
+    connectDB().then(async () => {
+      try {
+        await equipmentService.deleteManyEquipments({})
+        const inserted = await equipmentService.insertManyEquipments(results)
+        console.log("Equipments inserted to DB susessfully")
+      } catch(err) {
+        console.log(`Error inserting equipments to DB: ${err}`)
+      } finally {
+        disconnectDB()
+          .then(() => console.log("🔌 DB connection closed"))
+          .catch(err => console.log(`🔌 Error closing connection to DB: ${err}`))
+      }
+    }).catch(error => {
       console.log(`Error conecting to DB: ${error}`)
       process.exit(1)
     })
-
-    try {
-      await deleteManyEquipments({})
-      const inserted = await insertManyEquipments(results)
-      console.log("Equipments inserted to DB susessfully")
-    } catch(err) {
-      console.log(`Error inserting equipments to DB: ${err}`)
-    } finally {
-      disconnectDB()
-        .then(() => console.log("🔌 DB connection closed"))
-        .catch(err => console.log(`🔌 Error closing connection to DB: ${err}`))
-    }
   })
 
     

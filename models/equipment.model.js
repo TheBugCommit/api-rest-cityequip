@@ -1,6 +1,11 @@
 import mongoose from 'mongoose';
 
 const equipmentSchema = new mongoose.Schema({
+  uuid: { 
+    type: String, 
+    required: true, 
+    unique: true 
+  },
   nom: { 
     type: String,
     trim: true,
