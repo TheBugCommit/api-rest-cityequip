@@ -1,7 +1,6 @@
 import { Router } from "express";
 import middlewares from '../../middlewares/index.js'
 import equipmentController from "../../controllers/v1/equipment.controller.js";
-import { equipmentIdValidator, equipmentValidator } from "../../validators/equipment.validator.js";
 
 const router = Router()
 
@@ -9,21 +8,21 @@ router.get('/equipaments', (req, res) => {res.send({message: 'ok'})})
 router.get('/equipaments/:id', (req, res) => {res.send({message: 'ok'})})
 router.post('/equipaments', 
     middlewares.authMiddleware, 
-    equipmentValidator, 
-    middlewares.validateRequest, 
+    middlewares.reqValidators.equipmentValidator, 
+    middlewares.reqValidators.validateErrorHandler, 
     equipmentController.createEquipment
 )
 router.put('/equipaments/:id', 
     middlewares.authMiddleware, 
-    equipmentIdValidator, 
-    equipmentValidator, 
-    middlewares.validateRequest, 
+    middlewares.reqValidators.equipmentIdValidator, 
+    middlewares.reqValidators.equipmentValidator, 
+    middlewares.reqValidators.validateErrorHandler, 
     equipmentController.updateEquipment
 )
 router.delete('/equipaments/:id', 
     middlewares.authMiddleware, 
-    equipmentIdValidator, 
-    middlewares.validateRequest, 
+    middlewares.reqValidators.equipmentIdValidator, 
+    middlewares.reqValidators.validateErrorHandler, 
     equipmentController.deleteEquipment
 )
 

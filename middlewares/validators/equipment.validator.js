@@ -1,5 +1,5 @@
 import { body, param } from 'express-validator'
-import Equipment from '../models/equipment.model.js'
+import Equipment from '../../models/equipment.model.js'
 
 const horariRegex = /^De (dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge) a (dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge), de ([0-9]|1[0-9]|2[0-3]) a ([0-9]|1[0-9]|2[0-3]) h$/
 const localitzacioRegex = /^(?:(?:CR|PL|AV|C|PZ|PS)\s+)?[\p{L}0-9][\p{L}0-9\s\-']*\s+\d+\s*(?:BLQ:\s*\d{1,4}\s*)?CP:\s*\d{5}$/iu
@@ -38,7 +38,7 @@ export const equipmentValidator = [
     .isString().withMessage('El tipus ha de ser una cadena'),
 
   body('municipal')
-    .optional({ nullable: true }).withMessage('Municipal és obligatori')
+    .optional({ nullable: true })
     .matches(/^(sí|si|no|true|false)$/i).withMessage('Municipal ha de ser un boolea')
     .customSanitizer((value) => {
       if (typeof value === 'boolean') return value
