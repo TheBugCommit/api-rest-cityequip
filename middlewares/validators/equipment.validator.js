@@ -1,10 +1,10 @@
-import { body, param } from 'express-validator'
+import { body } from 'express-validator'
 import Equipment from '../../models/equipment.model.js'
 
 const horariRegex = /^De (dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge) a (dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge), de ([0-9]|1[0-9]|2[0-3]) a ([0-9]|1[0-9]|2[0-3]) h$/
 const localitzacioRegex = /^(?:(?:CR|PL|AV|C|PZ|PS)\s+)?[\p{L}0-9][\p{L}0-9\s\-']*\s+\d+\s*(?:BLQ:\s*\d{1,4}\s*)?CP:\s*\d{5}$/iu
 
-export const equipmentValidator = [
+const equipmentValidator = [
   body().custom((body, { req }) => {
     const allowed = Object.keys(Equipment.schema.paths)
     const extra = Object.keys(body).filter(key => !allowed.includes(key))
@@ -81,7 +81,4 @@ export const equipmentValidator = [
     .isString().withMessage('nom_ens ha de ser una cadena')
 ]
 
-export const equipmentIdValidator = [
-  param('id')
-    .isUUID(4).withMessage('ID ha de ser un UUID vàlid'),
-]
+export default equipmentValidator

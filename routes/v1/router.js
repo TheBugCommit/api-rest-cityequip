@@ -9,20 +9,20 @@ router.get('/equipaments/:id', (req, res) => {res.send({message: 'ok'})})
 router.post('/equipaments', 
     middlewares.authMiddleware, 
     middlewares.reqValidators.equipmentValidator, 
-    middlewares.reqValidators.validateErrorHandler, 
+    middlewares.validationErrorHandler, 
     equipmentController.createEquipment
 )
 router.put('/equipaments/:id', 
     middlewares.authMiddleware, 
-    middlewares.reqValidators.equipmentIdValidator, 
+    middlewares.reqValidators.idValidator, 
     middlewares.reqValidators.equipmentValidator, 
-    middlewares.reqValidators.validateErrorHandler, 
+    middlewares.validationErrorHandler, 
     equipmentController.updateEquipment
 )
 router.delete('/equipaments/:id', 
     middlewares.authMiddleware, 
-    middlewares.reqValidators.equipmentIdValidator, 
-    middlewares.reqValidators.validateErrorHandler, 
+    middlewares.reqValidators.idValidator, 
+    middlewares.validationErrorHandler, 
     equipmentController.deleteEquipment
 )
 
