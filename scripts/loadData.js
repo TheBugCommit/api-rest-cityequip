@@ -2,40 +2,56 @@ import fs from "fs"
 import dotenv from 'dotenv'
 import csv from "csv-parser"
 import { v4 as uuidv4 } from "uuid"
-import { parse } from 'csv-parse/sync'
 import { connectDB, disconnectDB } from "../config/db.config.js";
 import equipmentService from "../services/equipment.service.js";
 import { cleanString, toBoolean, parseFloatSafe } from "../utils/parse.utils.js"
 
 dotenv.config()
 
-const fixedLines = []
 const raw = fs.readFileSync("data/OpenDataTGN_equipamientos.csv", "utf8")
-const lines = raw.split("\n").filter((l) => l.trim() !== "")
+let lines = raw.split("\n").filter((l) => l.trim() !== "")
 
-lines.forEach(line => {
-    let i = 0
-    while(i < line.length && line[i] != ',')
-      i++;
-    
-    line = '""' + line.slice(0, i) + '""' + line.slice(i)
-    const records = parse(line, {
-      relax_quotes: true,
-      trim: true,
-      skip_empty_lines: true
-    })
+let header = lines.shift().trim()
 
-    fixedLines.push(...records[0])
+header = header
+  .replace(/^"nom,/, '"nom",')
+  .replace(/""$/, '"')
+  .split(",")
+  .map(h => h.replace(/""([^"]+)""/g, '"$1"')) 
+  .join(',')
+
+
+const fixedLines = lines.map(line => {
+  let clean = line.trim()
+
+  clean = clean.replace(/""$/, '"')
+  clean = clean.replace(/""/g, '"')
+
+  const match = clean.match(/^"([^"]+,[^"]+),,/)
+
+  if (match) {
+    const fixedName = `"${match[1]}"` 
+    clean = clean.replace(/^"[^"]+,[^"]+,,/, fixedName + ",,")
+  } else {
+    let match = clean.match(/^"([^"]*?)"?(,|$)/)
+    if (match) {
+      const firstField = `"${match[1]}"`
+      clean = firstField + clean.slice(match[0].length - 1)
+    }
+  } 
+
+  return clean
 })
 
-fs.writeFileSync("data/equipments_fixed.csv", fixedLines.join("\n"), "utf8")
+fs.writeFileSync("data/equipments_fixed.csv", [header, ...fixedLines].join("\n"), "utf8")
 console.log("✅ CSV fixed: equipments_fixed.csv")
 
 const results = []
 fs.createReadStream("data/equipments_fixed.csv")
   .pipe(csv({
-    separator: ",",
+    separator: ',',
     skipLines: 0,
+    quote: '"',
   }))
   .on("data", (row) => {
     const data = {

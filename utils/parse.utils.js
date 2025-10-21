@@ -3,8 +3,6 @@ export function cleanString(str) {
   return str
     .trim()
     .replace(/\s+/g, " ")
-    .replace(/[^\p{L}\p{N}\s\.,:@()\/'-]/gu, "")
-    .normalize("NFC")
 }
 
 export function toBoolean(str) {
