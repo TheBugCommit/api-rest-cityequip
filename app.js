@@ -1,9 +1,8 @@
-import dotenv from 'dotenv'
+import'dotenv/config'
 import express from 'express'
 import routerV1 from './routes/v1/router.js'
 import middlewares from './middlewares/index.js'
 
-dotenv.config()
 const app = express()
 
 app.use(express.json())
