@@ -4,7 +4,9 @@ import equipmentController from "../../controllers/v1/equipment.controller.js";
 
 const router = Router()
 
-router.get('/equipaments', (req, res) => {res.send({message: 'ok'})})
+router.get('/equipaments', 
+    equipmentController.getEquipments
+)
 router.get('/equipaments/:id', 
     middlewares.reqValidators.idValidator,
     middlewares.validationErrorHandler, 

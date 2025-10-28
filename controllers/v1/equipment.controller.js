@@ -1,12 +1,23 @@
 import { v4 as uuidv4 } from "uuid"
 import equipmentService from "../../services/equipment.service.js";
 
+const getEquipments = async (req, res, next) => {
+    const { type } = req.query;
+
+    try {
+        const equipments = await equipmentService.getEquipments(type ? { "tipus": type } : {})
+        res.sendSuccess(equipments)
+    } catch (err) {
+        next(err)
+    }
+}
+
 const getEquipmentById = async (req, res, next) => {
     const id = req.params.id
 
     try {
         const equipment = await equipmentService.getEquipmentById(id)
-        res.sendSuccess(equipment, `Equipment { ${id} }`)
+        res.sendSuccess(equipment)
     } catch (err) {
         next(err)
     }
@@ -47,7 +58,8 @@ const equipmentController = {
     updateEquipment,
     createEquipment,
     deleteEquipment,
-    getEquipmentById
+    getEquipmentById,
+    getEquipments
 }
 
 export default equipmentController

@@ -24,6 +24,15 @@ const deleteManyEquipments = async (filter) => {
     }
 }
 
+const getEquipments = async (filter) => {
+    try {
+        return await Equipment.find(filter)
+    } catch (err) {
+        throw handleMongooseError(err, `Error finding equipments with filter: ${filter}`)
+    }
+}
+
+
 const getEquipmentById = async (id) => {
     try {
         if (id == null) throw createError("No ID passed", 400)
@@ -88,7 +97,8 @@ const equipmentService = {
     getEquipmentById,
     deleteManyEquipments,
     createEquipment,
-    updateEquipment
+    updateEquipment,
+    getEquipments
 }
 
 export default equipmentService
