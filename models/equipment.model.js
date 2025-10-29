@@ -21,15 +21,13 @@ const equipmentSchema = new mongoose.Schema({
   },
   municipal: { 
     type: Boolean,
-    trim: true
+    required: false,
   },
   latitud: { 
     type: Number,
-    trim: true, 
   },
   longitud: { 
     type: Number, 
-    trim: true 
   },
   localitzacio: { 
     type: String,

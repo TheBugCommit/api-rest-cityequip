@@ -18,49 +18,57 @@ const equipmentValidator = [
     .isString().withMessage('El nom ha de ser una cadena'),
 
   body('horari')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .isString().withMessage('L\'horari ha de ser una cadena'),
 
   body('tipus')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .isString().withMessage('El tipus ha de ser una cadena'),
 
   body('municipal')
-    .optional({ nullable: true })
-    .matches(/^(sí|si|no|true|false)$/i).withMessage('Municipal ha de ser un boolea')
     .customSanitizer((value) => {
       if (typeof value === 'boolean') return value
       if (typeof value === 'string') {
         const val = value.toLowerCase().trim()
-        return ['true', '1', 'si', 'sí'].includes(val)
+        if (['true', '1', 'si', 'sí'].includes(val)) return true
+        if (['false', '0', 'no'].includes(val)) return false
+        return null // campo vacío o valor inválido
       }
       if (typeof value === 'number') return value === 1
-      return false
+      return null
     }),
 
   body('latitud')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .isFloat({ min: -90, max: 90 }).withMessage('Latitud invàlida, entre -90 i 90')
     .toFloat(),
 
   body('longitud')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .isFloat({ min: -180, max: 180 }).withMessage('Longitud invàlida, entre -180 i 180')
     .toFloat(),
 
   body('localitzacio')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .matches(localitzacioRegex).withMessage('Format de la localització invàlid'),
 
   body('telefon')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .matches(/^\d{9}$/).withMessage('Número de telefon invàlid'),
 
   body('districte')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .isString().withMessage('El districte ha de ser una cadena'),
 
   body('codi_ens')
+    .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
     .matches(/^\d{10}$/).withMessage('codi_ens invàlid'),
 
