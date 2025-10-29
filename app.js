@@ -12,6 +12,11 @@ if (process.env.ENV && process.env.ENV == "prod")
 
 app.use(middlewares.responseHandler)
 app.use('/api/v1', routerV1)
+app.use((req, res, next) => {
+  res.status(404).json({
+    message: `Route not found: ${req.method} ${req.originalUrl}`,
+  })
+})
 app.use(middlewares.errorHandler)
 
 export default app

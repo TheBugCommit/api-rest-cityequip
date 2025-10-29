@@ -1,6 +1,8 @@
 import createError from './error.utils.js'
 
 const handleMongooseError = (err, context = 'Database operation failed') => {
+  if (err.status) return err;
+  
   if (err.name === 'ValidationError') {
     return createError(`Validation failed: ${err.message}`, 400, err)
   }

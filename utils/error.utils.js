@@ -3,7 +3,6 @@ const createError = (message, status, error = null) => {
     err.status = status
     err.errors = error?.errors || null
 
-    console.error(error, err)
     return err
 }
 

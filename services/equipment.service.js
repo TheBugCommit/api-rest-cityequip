@@ -49,11 +49,10 @@ const deleteEquipmentById = async (id) => {
 
         const deleted = await Equipment.findOneAndDelete({ uuid: id })
         if (!deleted) throw createError(`Equipment { ${id} } not found`, 404)
+        return deleted
     } catch (err) {
         throw handleMongooseError(err, 'Error deleting equipment')
     }
-
-    return deleted
 }
 
 const createEquipment = async (data) => {
