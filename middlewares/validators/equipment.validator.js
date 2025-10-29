@@ -1,7 +1,6 @@
 import { body } from 'express-validator'
 import Equipment from '../../models/equipment.model.js'
 
-const horariRegex = /^De (dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge) a (dilluns|dimarts|dimecres|dijous|divendres|dissabte|diumenge), de ([0-9]|1[0-9]|2[0-3]) a ([0-9]|1[0-9]|2[0-3]) h$/
 const localitzacioRegex = /^(?:(?:CR|PL|AV|C|PZ|PS)\s+)?[\p{L}0-9][\p{L}0-9\s\-']*\s+\d+\s*(?:BLQ:\s*\d{1,4}\s*)?CP:\s*\d{5}$/iu
 
 const equipmentValidator = [
@@ -20,18 +19,7 @@ const equipmentValidator = [
 
   body('horari')
     .optional({ nullable: true })
-    .matches(horariRegex)
-    .withMessage("L'horari ha de seguir el format De dilluns a divendres, de 9 a 14 h")
-    .custom((value) => {
-      const match = value.match(/de ([0-9]|1[0-9]|2[0-3]) a ([0-9]|1[0-9]|2[0-3]) h/)
-      if (match) {
-        const start = parseInt(match[1])
-        const end = parseInt(match[2])
-        if (start >= end)
-          throw new Error("L'hora inicial ha de ser menor que la final")
-      }
-      return true
-    }),
+    .isString().withMessage('L\'horari ha de ser una cadena'),
 
   body('tipus')
     .optional({ nullable: true })
