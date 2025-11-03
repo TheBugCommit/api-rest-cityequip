@@ -32,14 +32,5 @@ router.delete('/equipments/:id',
     equipmentController.deleteEquipment
 )
 
-/**
-- GET /equipments -> llista completa d'equipaments.
-- GET /equipments/:id -> detall d'un equipament.
-- GET /equipments?type=XXXX -> filtrat per tipus XXXX.
-- POST /equipments -> crear equipament (client autoritzat).
-- PUT /equipments/:id -> edicio (client autoritzat).
-- DELETE /equipments/:id -> eliminacio (client autoritzat).
-*/
-
 export default router
 
