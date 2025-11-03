@@ -29,6 +29,50 @@ const equipmentSchema = new mongoose.Schema({
   longitud: { 
     type: Number, 
   },
+  address: {
+    prefix: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      enum: ['CR', 'PL', 'AV', 'C', 'PZ', 'PS'],
+      required: false
+    },
+    street: {
+      type: String,
+      trim: true,
+      required: false
+    },
+    number: {
+      type: String,
+      trim: true,
+      required: false
+    },
+    block: {
+      type: String,
+      trim: true,
+      required: false
+    },
+    staircase: {
+      type: String,
+      trim: true,
+      required: false
+    },
+    floor: {
+      type: String,
+      trim: true,
+      required: false
+    },
+    door: {
+      type: String,
+      trim: true,
+      required: false
+    },
+    postalCode: {
+      type: String,
+      trim: true,
+      required: false
+    }
+  },
   localitzacio: { 
     type: String,
     trim: true, 

@@ -9,6 +9,8 @@ connectDB()
     })
 
 app.set('port', process.env.PORT)
-const server = app.listen(app.get('port'), () => {
-    console.log(`Express running at PORT ${server.address().port} **`)
-})
+const PORT = Number(process.env.PORT) || 3000;
+const server = app.listen(PORT, () => {
+  const { port } = server.address() || { port: PORT };
+  console.log(`Express running at PORT ${port} **`);
+});

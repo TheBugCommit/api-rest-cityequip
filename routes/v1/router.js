@@ -1,44 +1,45 @@
-import { Router } from "express";
+import { Router } from "express"
 import middlewares from '../../middlewares/index.js'
-import equipmentController from "../../controllers/v1/equipment.controller.js";
+import equipmentController from "../../controllers/v1/equipment.controller.js"
 
 const router = Router()
 
-router.get('/equipaments', 
+router.get('/equipments',
     equipmentController.getEquipments
 )
-router.get('/equipaments/:id', 
+router.get('/equipments/:id',
     middlewares.reqValidators.idValidator,
-    middlewares.validationErrorHandler, 
+    middlewares.validationErrorHandler,
     equipmentController.getEquipmentById
 )
-router.post('/equipaments', 
-    middlewares.authMiddleware, 
-    middlewares.reqValidators.equipmentValidator, 
-    middlewares.validationErrorHandler, 
+router.post('/equipments',
+    middlewares.authMiddleware,
+    middlewares.reqValidators.equipmentValidator,
+    middlewares.validationErrorHandler,
     equipmentController.createEquipment
 )
-router.put('/equipaments/:id', 
-    middlewares.authMiddleware, 
-    middlewares.reqValidators.idValidator, 
-    middlewares.reqValidators.equipmentValidator, 
-    middlewares.validationErrorHandler, 
+router.put('/equipments/:id',
+    middlewares.authMiddleware,
+    middlewares.reqValidators.idValidator,
+    middlewares.reqValidators.equipmentValidator,
+    middlewares.validationErrorHandler,
     equipmentController.updateEquipment
 )
-router.delete('/equipaments/:id', 
-    middlewares.authMiddleware, 
-    middlewares.reqValidators.idValidator, 
-    middlewares.validationErrorHandler, 
+router.delete('/equipments/:id',
+    middlewares.authMiddleware,
+    middlewares.reqValidators.idValidator,
+    middlewares.validationErrorHandler,
     equipmentController.deleteEquipment
 )
 
 /**
-- GET /equipments → listado completo de equipamientos.
-- GET /equipments/:id → detalle de un equipamiento.
-- GET /equipments?type=XXXX → filtrado por tipo de equipamiento XXXX.
-- POST /equipments → añadir nuevo equipamiento (solo cliente autorizado).
-- PUT /equipments/:id → edición (solo cliente autorizado).
-- DELETE /equipments/:id → borrado (solo cliente autorizado).
- */
+- GET /equipments -> llista completa d'equipaments.
+- GET /equipments/:id -> detall d'un equipament.
+- GET /equipments?type=XXXX -> filtrat per tipus XXXX.
+- POST /equipments -> crear equipament (client autoritzat).
+- PUT /equipments/:id -> edicio (client autoritzat).
+- DELETE /equipments/:id -> eliminacio (client autoritzat).
+*/
 
 export default router
+
