@@ -1,8 +1,6 @@
 import { body } from 'express-validator'
 import Equipment from '../../models/equipment.model.js'
 
-const localitzacioRegex = /^(?:(?:CR|PL|AV|C|PZ|PS)\s+)?[\p{L}0-9][\p{L}0-9\s\-']*\s+\d+\s*(?:BLQ:\s*\d{1,4}\s*)?CP:\s*\d{5}$/iu
-
 const equipmentValidator = [
   body().custom((body, { req }) => {
     const allowed = Object.keys(Equipment.schema.paths)
@@ -54,7 +52,7 @@ const equipmentValidator = [
   body('localitzacio')
     .customSanitizer(value => value === '' ? null : value)
     .optional({ nullable: true })
-    .matches(localitzacioRegex).withMessage('Format de la localització invàlid'),
+    .isString().withMessage('La localització ha de ser una cadena'),
 
   body('telefon')
     .customSanitizer(value => value === '' ? null : value)
