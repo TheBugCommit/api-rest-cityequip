@@ -1,6 +1,14 @@
 import { body } from 'express-validator'
 import Equipment from '../../models/equipment.model.js'
 
+const capitalizeWords = (str) => {
+  if (!str) return '';
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 const equipmentValidator = [
   body().custom((body, { req }) => {
     const allowed = Object.keys(Equipment.schema.paths)
@@ -12,7 +20,7 @@ const equipmentValidator = [
   }),
 
   body('nom')
-    .notEmpty().withMessage('El nom és obligatori')
+    .trim().notEmpty().withMessage('El nom és obligatori')
     .isString().withMessage('El nom ha de ser una cadena'),
 
   body('horari')
@@ -21,8 +29,9 @@ const equipmentValidator = [
     .isString().withMessage('L\'horari ha de ser una cadena'),
 
   body('tipus')
-    .notEmpty().withMessage('El tipus és obligatori')
-    .isString().withMessage('El tipus ha de ser una cadena'),
+    .trim().notEmpty().withMessage('El tipus és obligatori')
+    .isString().withMessage('El tipus ha de ser una cadena')
+    .toLowerCase().customSanitizer(str => capitalizeWords(str)),
 
   body('municipal')
     .customSanitizer((value) => {
@@ -70,7 +79,7 @@ const equipmentValidator = [
     .matches(/^\d{10}$/).withMessage('codi_ens invàlid'),
 
   body('nom_ens')
-    .notEmpty().withMessage('nom_ens és obligatori')
+    .trim().notEmpty().withMessage('nom_ens és obligatori')
     .isString().withMessage('nom_ens ha de ser una cadena')
 ]
 

@@ -27,7 +27,7 @@ const updateEquipment = async (req, res, next) => {
     const id = req.params.id
 
     try {
-        const equipment = await equipmentService.updateEquipment(id, prepareEquipmentPayload(req.body))
+        const equipment = await equipmentService.updateEquipment(id, req.body)
         res.sendSuccess(equipment, `Equipment { ${id} } updated`)
     } catch (err) {
         next(err)

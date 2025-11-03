@@ -5,6 +5,14 @@ export function cleanString(str) {
     .replace(/\s+/g, " ")
 }
 
+export function capitalizeWords(str) {
+  if (!str) return '';
+  return str
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+}
+
 export function toBoolean(str) {
   if (!str) return null
   const val = cleanString(str).toLowerCase()

@@ -4,7 +4,7 @@ import csv from "csv-parser"
 import { v4 as uuidv4 } from "uuid"
 import { connectDB, disconnectDB } from "../config/db.config.js";
 import equipmentService from "../services/equipment.service.js";
-import { cleanString, toBoolean, parseFloatSafe } from "../utils/parse.utils.js"
+import { cleanString, toBoolean, parseFloatSafe, capitalizeWords } from "../utils/parse.utils.js"
 
 dotenv.config()
 
@@ -58,7 +58,7 @@ fs.createReadStream("data/equipments_fixed.csv")
       uuid: uuidv4(),
       nom: cleanString(row.nom),
       horari: cleanString(row.horari),
-      tipus: cleanString(row.tipus),
+      tipus: capitalizeWords(cleanString(row.tipus).toLowerCase()),
       municipal: toBoolean(row.municipal),
       latitud: parseFloatSafe(row.latitud),
       longitud: parseFloatSafe(row.longitud),
