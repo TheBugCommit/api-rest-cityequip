@@ -17,7 +17,8 @@ const equipmentSchema = new mongoose.Schema({
   },
   tipus: { 
     type: String, 
-    trim: true
+    trim: true,
+    required: true 
   },
   municipal: { 
     type: Boolean,

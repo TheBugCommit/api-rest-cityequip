@@ -23,8 +23,7 @@ const equipmentValidator = [
     .isString().withMessage('L\'horari ha de ser una cadena'),
 
   body('tipus')
-    .customSanitizer(value => value === '' ? null : value)
-    .optional({ nullable: true })
+    .notEmpty().withMessage('El tipus és obligatori')
     .isString().withMessage('El tipus ha de ser una cadena'),
 
   body('municipal')
@@ -34,7 +33,7 @@ const equipmentValidator = [
         const val = value.toLowerCase().trim()
         if (['true', '1', 'si', 'sí'].includes(val)) return true
         if (['false', '0', 'no'].includes(val)) return false
-        return null // campo vacío o valor inválido
+        return null
       }
       if (typeof value === 'number') return value === 1
       return null
