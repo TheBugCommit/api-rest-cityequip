@@ -34,7 +34,7 @@ const equipmentSchema = new mongoose.Schema({
       type: String,
       trim: true,
       uppercase: true,
-      enum: ['CR', 'PL', 'AV', 'C', 'PZ', 'PS'],
+      enum: ['RB', 'CR', 'AV', 'PG', 'PL', 'CM', 'AC', 'CT', 'PE', 'ML', 'CL', 'BL', 'PR', 'PJ', 'DM', 'C', 'PZ', 'PS'],
       required: false
     },
     street: {

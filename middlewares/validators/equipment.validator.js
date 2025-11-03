@@ -1,12 +1,15 @@
 import { body } from 'express-validator'
 import Equipment from '../../models/equipment.model.js'
-import { getAddressPrefixes, getLocalitzacioRegex, normalizeAddress } from '../../utils/address.utils.js'
+import {
+  getAddressPrefixes,
+  normalizeAddress,
+  parseLocalitzacio,
+  isValidAddressNumber,
+  isValidOptionalAddressField
+} from '../../utils/address.utils.js'
 
 const ADDRESS_PREFIXES = getAddressPrefixes()
-const OPTIONAL_FIELD_REGEX = /^[\p{L}0-9]{1,4}$/u
-const NUMBER_REGEX = /^\d+$/
 const POSTAL_CODE_REGEX = /^\d{5}$/
-const localitzacioRegex = getLocalitzacioRegex()
 
 const sanitizeSegment = (value) => {
   if (value === undefined || value === null) return ''
@@ -17,7 +20,7 @@ const sanitizeSegment = (value) => {
 const equipmentValidator = [
   body().custom((body, { req }) => {
     const allowed = new Set([...Object.keys(Equipment.schema.paths), 'address'])
-    const extra = Object.keys(body).filter(key => !allowed.has(key))
+    const extra = Object.keys(body).filter((key) => !allowed.has(key))
     if (extra.length) {
       throw new Error(`Camps extres no permesos: ${extra.join(', ')}`)
     }
@@ -29,87 +32,113 @@ const equipmentValidator = [
     .isString().withMessage('El nom ha de ser una cadena'),
 
   body('horari')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
-    .isString().withMessage('L\'horari ha de ser una cadena'),
+    .isString().withMessage("L'horari ha de ser una cadena"),
 
   body('tipus')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
     .isString().withMessage('El tipus ha de ser una cadena'),
 
   body('municipal')
     .customSanitizer((value) => {
       if (typeof value === 'boolean') return value
+      if (typeof value === 'number') return value === 1
       if (typeof value === 'string') {
-        const val = value.toLowerCase().trim()
-        if (['true', '1', 'si', 'sí'].includes(val)) return true
-        if (['false', '0', 'no'].includes(val)) return false
+        const raw = value.trim().toLowerCase()
+        const normalized = raw.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        if (['true', '1', 'si', 's', 'yes', 'y'].includes(normalized)) return true
+        if (['false', '0', 'no', 'n'].includes(normalized)) return false
         return null
       }
-      if (typeof value === 'number') return value === 1
       return null
     }),
 
   body('latitud')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
     .isFloat({ min: -90, max: 90 }).withMessage('Latitud invalida, entre -90 i 90')
     .toFloat(),
 
   body('longitud')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
     .isFloat({ min: -180, max: 180 }).withMessage('Longitud invalida, entre -180 i 180')
     .toFloat(),
 
   body('localitzacio')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
-    .matches(localitzacioRegex).withMessage('Format de la localitzacio invalid'),
+    .custom((value) => {
+      if (!value) return true
+      if (!parseLocalitzacio(value)) {
+        throw new Error('Format de la localitzacio invalid')
+      }
+      return true
+    }),
 
   body('address')
     .optional({ nullable: true })
     .custom((value, { req }) => {
-      if (value === null || value === undefined) {
+      if (value === null || value === undefined || value === '') {
         delete req.body.address
         return true
       }
 
       if (typeof value !== 'object' || Array.isArray(value)) {
-        throw new Error('L\'adresa ha de ser un objecte')
+        throw new Error("L'adreça ha de ser un objecte")
       }
 
       const prefix = sanitizeSegment(value.prefix).toUpperCase()
-      if (prefix && !ADDRESS_PREFIXES.includes(prefix)) {
-        throw new Error('Prefix de via invalid')
+      const data = {
+        prefix,
+        street: sanitizeSegment(value.street),
+        number: sanitizeSegment(value.number),
+        block: sanitizeSegment(value.block),
+        staircase: sanitizeSegment(value.staircase),
+        floor: sanitizeSegment(value.floor),
+        door: sanitizeSegment(value.door),
+        postalCode: sanitizeSegment(value.postalCode)
       }
 
-      const normalized = normalizeAddress({ ...value, prefix })
+      const normalized = normalizeAddress(data)
       if (!normalized) {
         delete req.body.address
         return true
       }
 
-      const { street, number, block, staircase, floor, door, postalCode } = normalized
-
-      if (!street) throw new Error('El carrer de l\'adresa es obligatori')
-      if (!number) throw new Error('El numero de l\'adresa es obligatori')
-      if (!postalCode) throw new Error('El codi postal de l\'adresa es obligatori')
-
-      if (!NUMBER_REGEX.test(number)) {
-        throw new Error('El numero de l\'adresa ha de ser numeric')
+      if (normalized.prefix && !ADDRESS_PREFIXES.includes(normalized.prefix)) {
+        throw new Error('Prefix de via invalid')
       }
 
-      const optionalFields = { block, staircase, floor, door }
-      for (const [field, fieldValue] of Object.entries(optionalFields)) {
-        if (fieldValue && !OPTIONAL_FIELD_REGEX.test(fieldValue)) {
-          throw new Error(`El camp ${field} de l'adresa es invalid`)
-        }
+      if (!normalized.street) {
+        throw new Error("El carrer de l'adreça es obligatori")
       }
 
-      if (!POSTAL_CODE_REGEX.test(postalCode)) {
+      if (!normalized.postalCode) {
+        throw new Error("El codi postal de l'adreça es obligatori")
+      }
+
+      if (!POSTAL_CODE_REGEX.test(normalized.postalCode)) {
         throw new Error('El codi postal ha de tenir 5 digits')
+      }
+
+      if (normalized.number && !isValidAddressNumber(normalized.number)) {
+        throw new Error("El numero de l'adreça te un format invalid")
+      }
+
+      const optionalFields = {
+        block: normalized.block,
+        staircase: normalized.staircase,
+        floor: normalized.floor,
+        door: normalized.door
+      }
+
+      for (const [field, fieldValue] of Object.entries(optionalFields)) {
+        if (fieldValue && !isValidOptionalAddressField(fieldValue)) {
+          throw new Error(`El camp ${field} de l'adreça te un format invalid`)
+        }
       }
 
       req.body.address = normalized
@@ -117,17 +146,17 @@ const equipmentValidator = [
     }),
 
   body('telefon')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
     .matches(/^\d{9}$/).withMessage('Numero de telefon invalid'),
 
   body('districte')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
     .isString().withMessage('El districte ha de ser una cadena'),
 
   body('codi_ens')
-    .customSanitizer(value => value === '' ? null : value)
+    .customSanitizer((value) => (value === '' ? null : value))
     .optional({ nullable: true })
     .matches(/^\d{10}$/).withMessage('codi_ens invalid'),
 
