@@ -1,10 +1,9 @@
 import fs from "fs"
 import dotenv from 'dotenv'
 import csv from "csv-parser"
-import { v4 as uuidv4 } from "uuid"
 import { connectDB, disconnectDB } from "../config/db.config.js";
 import equipmentService from "../services/equipment.service.js";
-import { cleanString, toBoolean, parseFloatSafe, capitalizeWords } from "../utils/parse.utils.js"
+import {  toBoolean } from "../utils/parse.utils.js"
 
 dotenv.config()
 
@@ -55,18 +54,17 @@ fs.createReadStream("data/equipments_fixed.csv")
   }))
   .on("data", (row) => {
     const data = {
-      uuid: uuidv4(),
-      nom: cleanString(row.nom),
-      horari: cleanString(row.horari),
-      tipus: capitalizeWords(cleanString(row.tipus).toLowerCase()),
+      nom: row.nom,
+      horari: row.horari,
+      tipus: row.tipus,
       municipal: toBoolean(row.municipal),
-      latitud: parseFloatSafe(row.latitud),
-      longitud: parseFloatSafe(row.longitud),
-      localitzacio: cleanString(row.localitzacio),
-      telefon: cleanString(row.telefon),
-      districte: cleanString(row.districte),
-      codi_ens: cleanString(row.CODI_ENS),
-      nom_ens: cleanString(row.NOM_ENS),
+      latitud: row.latitud,
+      longitud: row.longitud,
+      localitzacio: row.localitzacio,
+      telefon: row.telefon,
+      districte: row.districte,
+      codi_ens: row.CODI_ENS,
+      nom_ens: row.NOM_ENS,
     }
     results.push(data)
   })

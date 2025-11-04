@@ -7,7 +7,7 @@ const insertManyEquipments = async (data) => {
         if (!Array.isArray(data) || data.length === 0)
             throw createError("No data to insert", 400)
 
-        return await Equipment.insertMany(data)
+        return await Equipment.insertMany(data, { validateBeforeSave: true })
     } catch (err) {
         throw handleMongooseError(err, 'Error inserting many equipments')
     }
@@ -26,7 +26,7 @@ const deleteManyEquipments = async (filter) => {
 
 const getEquipments = async (filter) => {
     try {
-        return await Equipment.find(filter)
+        return await Equipment.find(filter).collation({ locale: 'ca', strength: 2 });
     } catch (err) {
         throw handleMongooseError(err, `Error finding equipments with filter: ${filter}`)
     }

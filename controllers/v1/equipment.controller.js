@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid"
 import equipmentService from "../../services/equipment.service.js";
 
 const getEquipments = async (req, res, next) => {
@@ -36,7 +35,6 @@ const updateEquipment = async (req, res, next) => {
 
 const createEquipment = async (req, res, next) => {
     try {
-        req.body.uuid = uuidv4()
         const equipment = await equipmentService.createEquipment(req.body)
         res.sendSuccess(equipment, `Equipment { ${equipment.uuid} } created`, 201)
     } catch (err) {

@@ -1,14 +1,6 @@
 import { body } from 'express-validator'
 import Equipment from '../../models/equipment.model.js'
 
-const capitalizeWords = (str) => {
-  if (!str) return '';
-  return str
-    .split(' ')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(' ');
-}
-
 const equipmentValidator = [
   body().custom((body, { req }) => {
     const allowed = Object.keys(Equipment.schema.paths)
@@ -30,8 +22,7 @@ const equipmentValidator = [
 
   body('tipus')
     .trim().notEmpty().withMessage('El tipus és obligatori')
-    .isString().withMessage('El tipus ha de ser una cadena')
-    .toLowerCase().customSanitizer(str => capitalizeWords(str)),
+    .isString().withMessage('El tipus ha de ser una cadena'),
 
   body('municipal')
     .customSanitizer((value) => {
@@ -80,7 +71,7 @@ const equipmentValidator = [
 
   body('nom_ens')
     .trim().notEmpty().withMessage('nom_ens és obligatori')
-    .isString().withMessage('nom_ens ha de ser una cadena')
+    .isString().withMessage('nom_ens ha de ser una cadena'),
 ]
 
 export default equipmentValidator
