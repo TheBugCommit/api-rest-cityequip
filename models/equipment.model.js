@@ -6,7 +6,8 @@ const equipmentSchema = new mongoose.Schema({
   uuid: { 
     type: String, 
     required: true, 
-    unique: true 
+    unique: true,
+    default: uuidv4()
   },
   nom: { 
     type: String,
@@ -61,8 +62,7 @@ const equipmentSchema = new mongoose.Schema({
 
 equipmentSchema.index({ tipus: 1 }, { collation: { locale: 'ca', strength: 2 } })
 
-equipmentSchema.pre('save', function (next) {
-  this.uuid = uuidv4()
+equipmentSchema.pre('validate', function (next) {
   normalizeEquipment(this)
   next()
 })

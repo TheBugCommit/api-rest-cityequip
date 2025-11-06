@@ -43,7 +43,7 @@ const fixedLines = lines.map(line => {
 })
 
 fs.writeFileSync("data/equipments_fixed.csv", [header, ...fixedLines].join("\n"), "utf8")
-console.log("✅ CSV fixed: equipments_fixed.csv")
+console.log("CSV fixed: equipments_fixed.csv")
 
 const results = []
 fs.createReadStream("data/equipments_fixed.csv")
@@ -69,9 +69,9 @@ fs.createReadStream("data/equipments_fixed.csv")
     results.push(data)
   })
   .on("end", async () => {
-    console.log(`✅ ${results.length} rows processed`)
+    console.log(`${results.length} rows processed`)
     if (results.length === 0) {
-      console.error("❌ Error no data to insert in CSV file")
+      console.error("Error no data to insert in CSV file")
       return
     }
 
@@ -84,8 +84,8 @@ fs.createReadStream("data/equipments_fixed.csv")
         console.log(`Error inserting equipments to DB: ${err}`)
       } finally {
         disconnectDB()
-          .then(() => console.log("🔌 DB connection closed"))
-          .catch(err => console.log(`🔌 Error closing connection to DB: ${err}`))
+          .then(() => console.log("DB connection closed"))
+          .catch(err => console.log(`Error closing connection to DB: ${err}`))
       }
     }).catch(error => {
       console.log(`Error conecting to DB: ${error}`)
