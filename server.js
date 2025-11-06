@@ -2,9 +2,9 @@ import app from './app.js'
 import { connectDB } from './config/db.config.js'
 
 connectDB()
-    .then(() => console.log("✅ DB connected"))
+    .then(() => console.log("DB connected"))
     .catch(error => {
-        console.error("❌ Error connecting to DB:", error)
+        console.error("Error connecting to DB:", error)
         process.exit(1)
     })
 
